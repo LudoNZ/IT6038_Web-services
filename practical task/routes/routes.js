@@ -5,7 +5,7 @@ const router = express.Router()
 
 module.exports = router;
 
-const Model = require('../model/model');
+const Model = require('../models/model');
 
 
 //this page contains the link to the spotify authorization page

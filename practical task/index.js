@@ -7,6 +7,7 @@ const routes = require('./routes/routes')
 const users = require('./routes/users');
 const Joi = require('joi');
 
+Joi.objectId = require('joi-objectid')(Joi);
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 
