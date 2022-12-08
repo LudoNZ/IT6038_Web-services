@@ -6,6 +6,7 @@ const mongoString = process.env.DATABASE_URL;
 const routes = require('./routes/routes')
 const users = require('./routes/users');
 const Joi = require('joi');
+mongoose.set('strictQuery', true);
 
 Joi.objectId = require('joi-objectid')(Joi);
 mongoose.connect(mongoString);
