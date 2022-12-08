@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+const querystring = require('node:querystring')
 const router = express.Router()
 
 module.exports = router;
@@ -23,14 +24,25 @@ router.get("/account", async (req, res) => {
   });
 
 router.get("/login", async (req, res) => {
-    const spotifyLogin = await fetch("https://accounts.spotify.com/authorize?client_id=" +
-        process.env.CLIENT_ID +
-        "&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Faccount&scope=user-top-read");
-    if (spotifyLogin.ok) {
-        const body = await spotifyLogin.text();
-        res.location("https://accounts.spotify.com/authorize")
-        res.send(body);
-    }
+
+
+    res.redirect('https://accounts.spotify.com/authorize?' +
+    querystring.stringify({
+      response_type: 'code',
+      client_id: process.env.CLIENT_ID,
+      scope: "user-top-read",
+      redirect_uri: "http://localhost:3000/api/account"
+    }));
+
+
+    // const spotifyLogin = await fetch("https://accounts.spotify.com/authorize?client_id=" +
+    //     process.env.CLIENT_ID +
+    //     "&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Faccount&scope=user-top-read");
+    //     // if (spotifyLogin.ok) {
+        //     const body = await spotifyLogin.text();
+        //     res.location("https://accounts.spotify.com/authorize")
+        //     res.send(body);
+        // }
 })
 
 
