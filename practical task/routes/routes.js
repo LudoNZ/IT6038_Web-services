@@ -1,10 +1,39 @@
 const express = require('express');
-
+require('dotenv').config();
 const router = express.Router()
 
 module.exports = router;
 
 const Model = require('../model/model');
+
+
+//this page contains the link to the spotify authorization page
+//contains custom url queries that pertain to my specific app
+router.get("/", (req, res) => {
+    res.send(
+        "<a href='/api/login'>Sign in</a>"
+    );
+  });
+  
+  //this is the page user is redirected to after accepting data use on spotify's website
+  //it does not have to be /account, it can be whatever page you want it to be
+router.get("/account", async (req, res) => {
+    console.log("spotify response code is " + req.query.code);
+    res.send("account page");
+  });
+
+router.get("/login", async (req, res) => {
+    const spotifyLogin = await fetch("https://accounts.spotify.com/authorize?client_id=" +
+        process.env.CLIENT_ID +
+        "&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Faccount&scope=user-top-read");
+    if (spotifyLogin.ok) {
+        const body = await spotifyLogin.text();
+        res.location("https://accounts.spotify.com/authorize")
+        res.send(body);
+    }
+})
+
+
 
 //Post Method
 router.post('/post', async (req, res) => {
