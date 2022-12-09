@@ -6,6 +6,7 @@ const mongoString = process.env.DATABASE_URL;
 const routes = require('./routes/routes')
 const users = require('./routes/users');
 const Joi = require('joi');
+const auth = require('./routes/auth');
 mongoose.set('strictQuery', true);
 
 Joi.objectId = require('joi-objectid')(Joi);
@@ -24,6 +25,7 @@ const app = express();
 app.use(express.json());
 app.use('/api', routes)
 app.use('/api/users', users);
+app.use('/api/auth', auth);
 
 app.listen(3000, () => {
     console.log(`Server Started at ${3000}`)
