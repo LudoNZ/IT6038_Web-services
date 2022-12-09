@@ -5,9 +5,15 @@ const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
 const routes = require('./routes/routes')
 const users = require('./routes/users');
+const config = require('config');
 const Joi = require('joi');
 const auth = require('./routes/auth');
 mongoose.set('strictQuery', true);
+
+if (!config.get('PrivateKey')) {
+    console.error('FATAL ERROR: PrivateKey is not defined.');
+    process.exit(1);
+}
 
 Joi.objectId = require('joi-objectid')(Joi);
 mongoose.connect(mongoString);
