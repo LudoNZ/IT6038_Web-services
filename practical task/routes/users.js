@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const _ = require('lodash');
 
 router.post('/', async (req, res) => {
+    console.info('Post Users called');
     // First Validate The Request
     const { error } = validate(req.body);
     if (error) {
@@ -16,8 +17,10 @@ router.post('/', async (req, res) => {
     // Check if this user already exisits
     let user = await User.findOne({ email: req.body.email });
     if (user) {
+        console.info(`user ${user} already exists`);
         return res.status(400).send('That user already exists!');
     } else {
+        console.info(`creating user ${user} - ${req.body.email}`)
         // Insert the new user if they do not exist yet
         user = new User(_.pick(req.body, ['name', 'email', 'password']));
         const salt = await bcrypt.genSalt(10);

@@ -9,14 +9,17 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     // First Validate The HTTP Request
+    console.info('Post Auth called, attempting login');
     const { error } = validate(req.body);
     if (error) {
+        console.info('No body in request');
         return res.status(400).send(error.details[0].message);
     }
 
     //  Now find the user by their email address
     let user = await User.findOne({ email: req.body.email });
     if (!user) {
+        console.info(`Cannot find user with email ${req.body.email}`)
         return res.status(400).send('Incorrect email or password.');
     }
 
@@ -26,7 +29,9 @@ router.post('/', async (req, res) => {
     if (!validPassword) {
         return res.status(400).send('Incorrect email or password.');
     }
+    console.info(`Succesful login with email ${req.body.email}`)
     const token = jwt.sign({ _id: user._id }, config.get('PrivateKey'));
+    res.header('x-auth-token', token);
     res.send(token);
 });
 
