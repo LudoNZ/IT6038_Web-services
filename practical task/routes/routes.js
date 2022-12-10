@@ -135,6 +135,19 @@ router.post("/refreshtoken", async (req, res) => {
     request.end();
 })
 
+router.get('/spotify/user', async (req, res) => {
+    console.info(`fetching Spotify user ${req.body.user_id}`);
+    var response = await fetch('https://api.spotify.com/v1/users/' + req.body.user_id,
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
 
 
 //Post Method
