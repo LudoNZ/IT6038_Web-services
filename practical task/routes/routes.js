@@ -1,7 +1,9 @@
 const express = require('express');
 require('dotenv').config();
-const querystring = require('node:querystring')
-const router = express.Router()
+const querystring = require('node:querystring');
+const { URLSearchParams } = require('node:url');
+const router = express.Router();
+const https = require('https');
 
 module.exports = router;
 
@@ -21,19 +23,68 @@ router.get("/", (req, res) => {
 router.get("/account", async (req, res) => {
     console.log("spotify response code is " + req.query.code);
     res.send("account page");
-  });
+});
 
 router.get("/login", async (req, res) => {
-
-
+    console.info('Redirecting to Spotify login')
     res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
       client_id: process.env.CLIENT_ID,
-      scope: "user-top-read",
+      scope: "user-top-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-library-read",
       redirect_uri: "http://localhost:3000/api/account"
     }));
+});
 
+router.post("/accesstoken", async (req, res) => {
+    console.info('Requesting Spotify Access Token');
+
+    const buff = Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET, 'utf-8');
+    const auth = buff.toString('base64');
+
+    var postData = querystring.stringify({
+        grant_type: 'authorization_code',
+        code: req.body.code,
+        redirect_uri: 'http://localhost:3000/api/account'
+    });
+
+        // request option
+    var options = {
+        host: 'accounts.spotify.com',
+        port: 443,
+        method: 'POST',
+        path: '/api/token',
+        headers: {
+            'Authorization': 'Basic ' + auth,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': postData.length
+        }
+    };
+        
+    // request object
+    var result = '';
+    var request = https.request(options, function (response) {
+        response.on('data', function (chunk) {
+            result += chunk;
+        });
+        response.on('end', function () {
+            console.log(result);
+            res.send(result);
+        });
+        response.on('error', function (err) {
+            console.log(err);
+        })
+    });
+        
+    // req error
+    request.on('error', function (err) {
+        console.log(err);
+    });
+        
+    //send request witht the postData form
+    request.write(postData);
+    request.end();
+})
 
     // const spotifyLogin = await fetch("https://accounts.spotify.com/authorize?client_id=" +
     //     process.env.CLIENT_ID +
