@@ -149,6 +149,19 @@ router.get('/spotify/user', async (req, res) => {
     res.send(await response.json())
 });
 
+router.get('/spotify/user/playlists', async (req, res) => {
+    console.info(`fetching Spotify user ${req.body.user_id}`);
+    var response = await fetch('https://api.spotify.com/v1/users/' + req.body.user_id + '/playlists',
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
 
 //Post Method
 router.post('/post', async (req, res) => {
