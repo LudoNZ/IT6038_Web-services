@@ -86,14 +86,53 @@ router.post("/accesstoken", async (req, res) => {
     request.end();
 })
 
-    // const spotifyLogin = await fetch("https://accounts.spotify.com/authorize?client_id=" +
-    //     process.env.CLIENT_ID +
-    //     "&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Faccount&scope=user-top-read");
-    //     // if (spotifyLogin.ok) {
-        //     const body = await spotifyLogin.text();
-        //     res.location("https://accounts.spotify.com/authorize")
-        //     res.send(body);
-        // }
+router.post("/refreshtoken", async (req, res) => {
+    console.info('Refreshing Spotify Access Token');
+
+    const buff = Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET, 'utf-8');
+    const auth = buff.toString('base64');
+
+    var postData = querystring.stringify({
+        grant_type: 'refresh_token',
+        refresh_token: req.body.code
+    });
+
+        // request option
+    var options = {
+        host: 'accounts.spotify.com',
+        port: 443,
+        method: 'POST',
+        path: '/api/token',
+        headers: {
+            'Authorization': 'Basic ' + auth,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': postData.length
+        }
+    };
+        
+    // request object
+    var result = '';
+    var request = https.request(options, function (response) {
+        response.on('data', function (chunk) {
+            result += chunk;
+        });
+        response.on('end', function () {
+            console.log(result);
+            res.send(result);
+        });
+        response.on('error', function (err) {
+            console.log(err);
+        })
+    });
+        
+    // req error
+    request.on('error', function (err) {
+        console.log(err);
+    });
+        
+    //send request witht the postData form
+    request.write(postData);
+    request.end();
 })
 
 
