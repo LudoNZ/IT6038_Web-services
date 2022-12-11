@@ -135,6 +135,7 @@ router.post("/refreshtoken", async (req, res) => {
     request.end();
 })
 
+//GET User Profile
 router.get('/spotify/user', async (req, res) => {
     console.info(`fetching Spotify user ${req.body.user_id}`);
     var response = await fetch('https://api.spotify.com/v1/users/' + req.body.user_id,
@@ -149,9 +150,58 @@ router.get('/spotify/user', async (req, res) => {
     res.send(await response.json())
 });
 
+//GET User Playlists
 router.get('/spotify/user/playlists', async (req, res) => {
     console.info(`fetching Spotify user ${req.body.user_id}`);
     var response = await fetch('https://api.spotify.com/v1/users/' + req.body.user_id + '/playlists',
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+//GET Artist
+router.get('/spotify/Artist', async (req, res) => {
+    console.info(`fetching Spotify user ${req.body.user_id}`);
+    artistID = '0k17h0D3J5VfsdmQ1iZtE9' //PinkFloyd
+    var response = await fetch('https://api.spotify.com/v1/artists/' + artistID,
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+//GET Artist Albums
+router.get('/spotify/Artist/albums', async (req, res) => {
+    console.info(`fetching Spotify user ${req.body.user_id}`);
+    artistID = '0k17h0D3J5VfsdmQ1iZtE9' //PinkFloyd
+    var response = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/albums/',
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+//GET Artist Top-Tracks
+router.get('/spotify/Artist/top-tracks', async (req, res) => {
+    console.info(`fetching Spotify user ${req.body.user_id}`);
+    artistID = '0k17h0D3J5VfsdmQ1iZtE9' //PinkFloyd
+    var response = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/top-tracks',
     {
         method: 'GET',
         headers: {
