@@ -152,7 +152,7 @@ router.get('/spotify/user', async (req, res) => {
 
 //GET User Playlists
 router.get('/spotify/user/playlists', async (req, res) => {
-    console.info(`fetching Spotify user ${req.body.user_id}`);
+    console.info(`fetching Spotify user ${req.body.user_id} Playlists`);
     var response = await fetch('https://api.spotify.com/v1/users/' + req.body.user_id + '/playlists',
     {
         method: 'GET',
@@ -167,8 +167,8 @@ router.get('/spotify/user/playlists', async (req, res) => {
 
 //GET Artist
 router.get('/spotify/Artist', async (req, res) => {
-    console.info(`fetching Spotify user ${req.body.user_id}`);
-    artistID = '0k17h0D3J5VfsdmQ1iZtE9' //PinkFloyd
+    console.info(`fetching artist ${req.body.artist_id}`);
+    artistID = req.body.artist_id
     var response = await fetch('https://api.spotify.com/v1/artists/' + artistID,
     {
         method: 'GET',
@@ -183,7 +183,7 @@ router.get('/spotify/Artist', async (req, res) => {
 
 //GET Artist Albums
 router.get('/spotify/Artist/albums', async (req, res) => {
-    console.info(`fetching Spotify user ${req.body.user_id}`);
+    console.info(`fetching Artist ${req.body.user_id}`);
     artistID = '0k17h0D3J5VfsdmQ1iZtE9' //PinkFloyd
     var response = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/albums/',
     {
@@ -197,11 +197,11 @@ router.get('/spotify/Artist/albums', async (req, res) => {
     res.send(await response.json())
 });
 
-//GET Artist Top-Tracks
-router.get('/spotify/Artist/top-tracks', async (req, res) => {
-    console.info(`fetching Spotify user ${req.body.user_id}`);
-    artistID = '0k17h0D3J5VfsdmQ1iZtE9' //PinkFloyd
-    var response = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/top-tracks',
+//GET Several Artists
+router.get('/spotify/Artists', async (req, res) => {
+    artistIDs = req.body.ids
+    console.info(`fetching Artists ${artistIDs}`);
+    var response = await fetch('https://api.spotify.com/v1/artists/?ids=' + artistIDs,
     {
         method: 'GET',
         headers: {
@@ -212,6 +212,73 @@ router.get('/spotify/Artist/top-tracks', async (req, res) => {
     
     res.send(await response.json())
 });
+
+//GET Artist Top-Tracks
+router.get('/spotify/Artist/top-tracks', async (req, res) => {
+    artistID = req.body.artist_id
+    console.info(`fetching Top-Track from Artist ${artistID}`);
+    var response = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?market=NZ',
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+//GET Album
+router.get('/spotify/Album', async (req, res) => {
+    albumID = req.body.album_id
+    console.info(`fetching album ${albumID}`);
+    var response = await fetch('https://api.spotify.com/v1/albums/' + albumID,
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+//GET Albums
+router.get('/spotify/Albums', async (req, res) => {
+    albumIDs = req.body.album_ids
+    console.info(`fetching albums ${albumIDs}`);
+    var response = await fetch('https://api.spotify.com/v1/albums?ids=' + albumIDs,
+    {
+        method: 'GET',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+//PUT Playlist Update
+router.put('/spotify/Playlist-update', async (req, res) => {
+    playlistID = req.body.playlist_id
+    console.info(`updating playlist ${playlistID}`);
+    res.json({requestBody: req.body});
+    var response = await fetch('https://api.spotify.com/v1/playlists/' + playlistID + '/tracks',
+    {
+        method: 'PUT',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        }
+    });
+    
+    res.send(await response.json())
+});
+
+
 
 //Post Method
 router.post('/post', async (req, res) => {
