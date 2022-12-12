@@ -81,7 +81,7 @@ router.post("/accesstoken", async (req, res) => {
         console.log(err);
     });
         
-    //send request witht the postData form
+    //send request with the postData form
     request.write(postData);
     request.end();
 })
@@ -261,18 +261,37 @@ router.get('/spotify/Albums', async (req, res) => {
     res.send(await response.json())
 });
 
-//PUT Playlist Update
-router.put('/spotify/Playlist-update', async (req, res) => {
-    playlistID = req.body.playlist_id
-    console.info(`updating playlist ${playlistID}`);
-    res.json({requestBody: req.body});
-    var response = await fetch('https://api.spotify.com/v1/playlists/' + playlistID + '/tracks',
+//GET Track
+router.get('/spotify/Track', async (req, res) => {
+    trackID = req.body.track_id
+    console.info(`fetching album ${trackID}`);
+    var response = await fetch('https://api.spotify.com/v1/tracks/' + trackID,
     {
-        method: 'PUT',
+        method: 'GET',
         headers: {
             "Authorization": req.headers["authorization"],
             "Content-Type": "application/json"
         }
+    });
+    
+    res.send(await response.json())
+});
+
+
+//PUT Playlist Update
+router.put('/spotify/Playlist-update', async (req, res) => {
+    playlistID = req.body.playlist_id
+    console.info(`updating playlist ${playlistID}`);
+    console.log(req.body)
+    console.log(JSON.stringify(req.body))
+    var response = await fetch('https://api.spotify.com/v1/playlists/' + playlistID + '/tracks',
+    {
+        method: 'POST',
+        headers: {
+            "Authorization": req.headers["authorization"],
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(req.body)
     });
     
     res.send(await response.json())
